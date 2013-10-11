@@ -1,0 +1,5 @@
+Transaction Code,Date,Item Code,Item Name,Price,Quantity
+T001,08/10/13,I001,Candy,$5.00,4
+,,I002,Chocolate,$10.00,5
+T002,08/20/13,I003,Coke,$7.00,1
+,,I001,Candy,$5.00,1

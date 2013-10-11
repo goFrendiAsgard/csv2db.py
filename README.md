@@ -63,4 +63,18 @@ Prerequisites
 How to use
 ==========
 
-Look at test.py
+* If your file is in either `xls` or `ods` extension, you must convert them into `csv` (i.e: By using `File|Save As` menu).
+  The `csv` file is still readable and editable by your office program. In addition, the csv can also be viewed as `text file`
+
+* Here is the `csv` of the previous worksheet example:
+    ```
+    Transaction Code,Date,Item Code,Item Name,Price,Quantity
+    T001,08/10/13,I001,Candy,$5.00,4
+    ,,I002,Chocolate,$10.00,5
+    T002,08/20/13,I003,Coke,$7.00,1
+    ,,I001,Candy,$5.00,1
+    ```
+
+* Make a python script just as in `test.py`
+
+* Run your python script
