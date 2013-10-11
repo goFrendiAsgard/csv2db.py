@@ -21,32 +21,35 @@ Look for this `normal` worksheet:
 | T001              | 08/10/2013    | I001          | Candy         | $5           | 4            |
 |                   |               | I002          | Chocolate     | $10          | 5            |
 | T002              | 08/20/2013    | I004          | Coke          | $7           | 1            |
+|                   |               | I001          | Candy         | $5           | 1            |
+
 
 Pretty normal, right?
 
-Now, you want the worksheet into 3 tables, `transaction`, `transaction_detail`, and `item`
+Now, you want to import the worksheet into 3 tables, `transaction`, `transaction_detail`, and `item`
 The content of `transaction` will be:
 
 | id  | Transaction code   | Date          |
 | :-- | :--------------- : | ------------: |
-| 1   | T001               | 2013-08-10    |
-| 2   | T002               | 2013-08-20    |
+| 1   | T001               | `2013-08-10`  |
+| 2   | T002               | `2013-08-20`  |
 
 The content of `item` will be:
 
 | id  | Item code     | Item name     | Price       |
 | :-- | :-----------: | :-----------: | ----------: |
 | 1   | I001          | Candy         | 5           |
-| 1   | I002          | Chocolate     | 10          |
-| 1   | I004          | Coke          | 7           |
+| 2   | I002          | Chocolate     | 10          |
+| 3   | I004          | Coke          | 7           |
 
 The content of `transaction detail` will be:
 
-| id  | Transaction code   | Item code     | Quantity     |
-| :-- | :----------------: | :-----------: | -----------: |
-| 1   | T001               | I001          | 4            |
-| 1   | T001               | I002          | 5            |
-| 1   | T002               | I004          | 1            |
+| id  | id_transaction   | id_item     | Quantity     |
+| :-- | :--------------: | :---------: | -----------: |
+| 1   | 1                | 1           | 4            |
+| 2   | 1                | 2           | 5            |
+| 3   | 2                | 3           | 1            |
+| 4   | 2                | 1           | 1            |
 
 
 
