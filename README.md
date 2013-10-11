@@ -29,27 +29,27 @@ Pretty normal, right?
 Now, you want to import the worksheet into 3 tables, `transaction`, `transaction_detail`, and `item`
 The content of `transaction` will be:
 
-| id  | Transaction code    | Date          |
-| :-- | :---------------- : | ------------: |
-| 1   | T001                | 2013/08/10    |
-| 2   | T002                | 2013/08/20    |
+| id  | code    | date          |
+| :-- | :---- : | ------------: |
+| 1   | T001    | 2013/08/10    |
+| 2   | T002    | 2013/08/20    |
 
 The content of `item` will be:
 
-| id  | Item code     | Item name     | Price       |
-| :-- | :-----------: | :-----------: | ----------: |
-| 1   | I001          | Candy         | 5           |
-| 2   | I002          | Chocolate     | 10          |
-| 3   | I004          | Coke          | 7           |
+| id  | code     | name          | price       |
+| :-- | :------: | :-----------: | ----------: |
+| 1   | I001     | Candy         | 5           |
+| 2   | I002     | Chocolate     | 10          |
+| 3   | I004     | Coke          | 7           |
 
 The content of `transaction detail` will be:
 
-| id  | id_transaction   | id_item     | Quantity     |
-| :-- | :--------------: | :---------: | -----------: |
-| 1   | 1                | 1           | 4            |
-| 2   | 1                | 2           | 5            |
-| 3   | 2                | 3           | 1            |
-| 4   | 2                | 1           | 1            |
+| id  | id_transaction   | id_item     | qty     |
+| :-- | :--------------: | :---------: | ------: |
+| 1   | 1                | 1           | 4       |
+| 2   | 1                | 2           | 5       |
+| 3   | 2                | 3           | 1       |
+| 4   | 2                | 1           | 1       |
 
 
 
