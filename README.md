@@ -41,6 +41,7 @@ The content of `item` will be:
 | I004          | Coke          | $7           |
 
 The content of `transaction detail` will be:
+
 | Transaction code  | Item code     | Quantity     |
 | :---------------- | :-----------: | -----------: |
 | T001              | I001          | 4            |
