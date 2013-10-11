@@ -28,7 +28,7 @@ table_structure = [
         'column_list': {
             'id'    : {'primary': True},
             'code'  : {'caption': 'Item Code', 'unique': True},
-            'name'  : {'caption': 'Item Name'}
+            'name'  : {'caption': 'Item Name'},
             'price' : {'caption': 'Price'}
         }
     },
@@ -43,5 +43,29 @@ table_structure = [
     }
 ]
 
+# define several preprocessing procedure (since human sucks...)
+def change_date_format(human_date):
+    ''' change 08/31/2000 into 2000-08-31
+    '''
+    date_part = human_date.split('/')
+    if len(date_part) == 3:
+        day = date_part[1]
+        month = date_part[0]
+        year = date_part[2]
+        computer_date = year + '-' + month + '-' + day
+    else:
+        computer_date = ''
+    return computer_date
+def remove_dollar(value):
+    ''' remove $, computer doesn't understand $
+    '''
+    return value.replace('$', '')
+
+# define callback to several fields
+callback = {
+    'Date' : change_date_format,
+    'price' : remove_dollar
+}
+
 # and here is the magic:
-csv2db(file_name, csv_param, connection_string, table_structure)
+csv2db(file_name, csv_param, connection_string, table_structure, callback)
