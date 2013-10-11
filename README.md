@@ -26,12 +26,14 @@ Pretty normal, right?
 
 Now, you want the worksheet into 3 tables, `transaction`, `transaction_detail`, and `item`
 The content of `transaction` will be:
+
 | Transaction code  | Date          |
-| :---------------- | :-----------: |
+| :---------------- | ------------: |
 | T001              | 08/10/2013    |
 | T002              | 08/20/2013    |
 
 The content of `item` will be:
+
 | Item code     | Item name     | Price        |
 | :------------ | :-----------: | -----------: |
 | I001          | Candy         | $5           |
