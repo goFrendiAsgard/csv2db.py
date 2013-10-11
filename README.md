@@ -31,8 +31,8 @@ The content of `transaction` will be:
 
 | id  | Transaction code    | Date          |
 | :-- | :---------------- : | ------------: |
-| 1   | T001                | `2013-08-10`  |
-| 2   | T002                | `2013-08-20`  |
+| 1   | T001                | 2013/08/10    |
+| 2   | T002                | 2013/08/20    |
 
 The content of `item` will be:
 
