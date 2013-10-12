@@ -14,7 +14,7 @@ csv_param = {
 }
 
 # the table structure of your database and how they related to your csv file
-table_structure = [
+table_structure_list = [
     {
         'table_name' : 'transaction',
         'column_list': {
@@ -64,8 +64,8 @@ def remove_dollar(value):
 # define callback to several fields
 callback = {
     'Date' : change_date_format,
-    'price' : remove_dollar
+    'Price' : remove_dollar
 }
 
 # and here is the magic:
-csv2db(file_name, csv_param, connection_string, table_structure, callback)
+csv2db(file_name, csv_param, connection_string, table_structure_list, callback)
