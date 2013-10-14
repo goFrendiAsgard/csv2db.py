@@ -14,9 +14,11 @@ csv_param = {
 }
 
 # the table structure of your database and how they related to your csv file
+# WARNING: "unique" doesn't has any correlation with database unique constraint, unique is used as csv record identifier (since primary key might not exists)
+# if you have many "unique" field, AND logic will be used
 table_structure_list = [
     {
-        'table_name' : 'transaction',
+        'table_name' : 'trans',
         'column_list': {
             'id'    : {'primary': True},
             'code'  : {'caption': 'Transaction Code', 'unique': True},
@@ -33,11 +35,11 @@ table_structure_list = [
         }
     },
     {
-        'table_name' : 'transaction_detail',
+        'table_name' : 'trans_detail',
         'column_list': {
             'id'                : {'primary'  : True},
-            'id_transaction'    : {'reference': 'transaction.id'},
-            'id_item'           : {'reference': 'item.id'},
+            'id_transaction'    : {'reference': 'trans.id', 'unique': True},
+            'id_item'           : {'reference': 'item.id', 'unique': True},
             'qty'               : {'caption'  : 'Quantity'}
         }
     }
@@ -59,12 +61,14 @@ def change_date_format(human_date):
 def remove_dollar(value):
     ''' remove $, computer doesn't understand $
     '''
-    return value.replace('$', '')
+    return float(value.replace('$', ''))
 
 # define callback to several fields
+# the callbacks are used to preprocess the csv data
 callback = {
     'Date' : change_date_format,
-    'Price' : remove_dollar
+    'Price' : remove_dollar,
+    'Quantity' : int
 }
 
 # and here is the magic:
