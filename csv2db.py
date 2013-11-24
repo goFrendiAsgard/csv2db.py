@@ -1,4 +1,4 @@
-import csv
+import csv, collections
 from sqlalchemy import create_engine, text
 
 def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_STRUCTURE_LIST=[], CALLBACK={}):
@@ -29,6 +29,7 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
     table_field_list = {}
     table_primary_key = {}
     table_caption_dict = {}
+    table_preprocess_dict = {}
     for table_structure in TABLE_STRUCTURE_LIST:
         if 'table_name' not in table_structure:
             table_structure['table_name'] = ''
@@ -43,6 +44,7 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
         table_unique_field_list[table_name] = []
         table_reference_list[table_name] = []
         table_primary_key[table_name] = ''
+        table_preprocess_dict[table_name] = {}
         for column in column_list:
             table_field_list[table_name].append(column)
             #table_data[table_name][column] = ''
@@ -54,6 +56,8 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
                 column_list[column]['unique'] = False
             if 'reference' not in column_list[column]:
                 column_list[column]['reference'] = ''
+            if 'preprocess' not in column_list[column]:
+                column_list[column]['preprocess'] = False
             table_caption_dict[table_name][column] = column_list[column]['caption']
             if column_list[column]['primary']:
                 table_primary_key[table_name]=column
@@ -64,6 +68,8 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
                 table_reference_list[table_name].append({
                     'ref_table':reference_table, 'ref_column':reference_column,
                     'real_column':column})
+            if isinstance(column_list[column]['preprocess'], collections.Callable):
+                table_preprocess_dict[table_name][column] = column_list[column]['preprocess']
 
     engine = create_engine(CONNECTION_STRING, echo=True) 
     conn = engine.connect()
@@ -73,16 +79,22 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
         for table_name in table_name_list:
             field_list = table_field_list[table_name]
             caption_dict = table_caption_dict[table_name]
-            primary_key = table_primary_key[table_name]           
+            primary_key = table_primary_key[table_name]  
+            preprocess_dict = table_preprocess_dict[table_name]         
             data = {}
             all_is_empty = True
             for field in field_list:
                 for i in xrange(len(csv_row)):
                     caption = csv_caption[i]
-                    if caption == caption_dict[field]:
-                        data[field] = csv_row[i]
+                    if caption == caption_dict[field]: 
                         if csv_row[i] != '':
+                            if field in preprocess_dict:
+                                data[field] = preprocess_dict[field](csv_row[i])
+                            else:
+                                data[field] = csv_row[i]
                             all_is_empty = False
+                        else:
+                            data[field] = ''
             if not all_is_empty:
                 table_data[table_name] = data
             if all_is_empty:                

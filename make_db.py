@@ -18,6 +18,7 @@ def make_db():
         code = Column(String)
         name = Column(String)
         price = Column(Integer)
+        unit = Column(String)
 
     class Transaction_Detail(Base):
         __tablename__ = 'trans_detail'
