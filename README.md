@@ -95,7 +95,7 @@ How to use
         ,,I001,Candy,$5.00,1
     ```
 
-* Make a python script just as in (test.py)[test.py]
+* Make a python script just as in [test.py](test.py)
 
     ```python
         from csv2db import csv2db
