@@ -25,6 +25,7 @@ Look for this `normal` worksheet:
 | T003              | 08/21/2013    | I004          | Coffee        | $2           | 1 cup        |
 |                   |               | I003          | Coke          | $7           | 1 bottle     |
 |                   |               | I001          | Candy         | $5           | 1 pcs        |
+|                   |               | I005          | 新聞          | $10.00       | 1 exemplar   |
 
 
 Pretty normal, right?
@@ -46,6 +47,7 @@ The content and structure of `item` table should be:
 | 2   | I002     | Chocolate     | 10          | pcs      |
 | 3   | I003     | Coke          | 7           | bottle   |
 | 4   | I004     | Coffee        | 2           | cup      |
+| 5   | I005     | 新聞          | 10          | exemplar |
 
 The content and structure of `transaction detail` table should be:
 
@@ -58,6 +60,7 @@ The content and structure of `transaction detail` table should be:
 | 5   | 3                | 4           | 1       |
 | 6   | 3                | 3           | 1       |
 | 7   | 3                | 1           | 1       |
+| 8   | 3                | 5           | 1       |
 
 Firstly you think it is going to be easy, but after realize that `transaction` and `item` has many-to-many relationship, you start to think it is not as easy as it firstly seen.
 
@@ -88,11 +91,16 @@ How to use
 
 * Here is the `csv` of the previous worksheet example:
     ```
-        Transaction Code,Date,Item Code,Item Name,Price,Quantity
-        T001,08/10/13,I001,Candy,$5.00,4
-        ,,I002,Chocolate,$10.00,5
-        T002,08/20/13,I003,Coke,$7.00,1
-        ,,I001,Candy,$5.00,1
+        "Transaction Code","Date","Item Code","Item Name","Price","Quantity"
+        "T001",08/10/13,"I001","Candy","$5.00","4 pcs"
+        ,,"I002","Chocolate","$10.00","5 pcs"
+        "T002",08/20/13,"I003","Coke","$7.00","1 bottle"
+        ,,"I001","Candy","$5.00","1 pcs"
+        "T004",08/21/13,"I004","Coffee","$2.00","1 cup"
+        ,,"I003","Coke","$7.00","1 bottle"
+        ,,"I001","Candy","$5.00","1 pcs"
+        ,,"I005","新聞","$10.00","1 exemplar"
+
     ```
 
 * Make a python script just as in [test.py](test.py)
@@ -110,7 +118,7 @@ How to use
         # more info about csv_param: http://docs.python.org/2/library/csv.html#csv-fmt-params
         csv_param = {
             'delimiter': ',',   # libre office usually use "," while microsoft office usually use "tab"
-            'quotechar': '|'
+            'quotechar': '"'
         }
 
         # define several preprocessing procedure (since human use different format from computer)

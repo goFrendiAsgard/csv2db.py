@@ -1,9 +1,15 @@
 import csv, collections
 from sqlalchemy import create_engine, text
 
+def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
+    csv_reader = csv.reader(utf8_data, dialect=dialect, **kwargs)
+    for row in csv_reader:
+        yield [unicode(cell, 'utf-8') for cell in row]
+
 def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_STRUCTURE_LIST=[], CALLBACK={}):
     csvfile = open(FILE_NAME, 'rb')
-    reader = csv.reader(csvfile, **CSV_PARAM)
+    #reader = csv.reader(csvfile, **CSV_PARAM)
+    reader = unicode_csv_reader(csvfile, **CSV_PARAM)
     csv_caption = []
     csv_row_list = []
 
@@ -47,7 +53,7 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
         table_preprocess_dict[table_name] = {}
         for column in column_list:
             table_field_list[table_name].append(column)
-            #table_data[table_name][column] = ''
+            table_data[table_name][column] = ''
             if 'caption' not in column_list[column]:
                 column_list[column]['caption'] = ''
             if 'primary' not in column_list[column]:
@@ -71,7 +77,7 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
             if isinstance(column_list[column]['preprocess'], collections.Callable):
                 table_preprocess_dict[table_name][column] = column_list[column]['preprocess']
 
-    engine = create_engine(CONNECTION_STRING, echo=True) 
+    engine = create_engine(CONNECTION_STRING, encoding='utf8', convert_unicode=True, echo=False) 
     conn = engine.connect()
 
     for csv_row in csv_row_list:
@@ -87,19 +93,18 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
                 for i in xrange(len(csv_row)):
                     caption = csv_caption[i]
                     if caption == caption_dict[field]: 
-                        if csv_row[i] != '':
+                        if csv_row[i] == '':
+                            data[field] = None
+                        else:
                             if field in preprocess_dict:
                                 data[field] = preprocess_dict[field](csv_row[i])
                             else:
                                 data[field] = csv_row[i]
-                            all_is_empty = False
-                        else:
-                            data[field] = ''
-            if not all_is_empty:
-                table_data[table_name] = data
+                            all_is_empty = False  
             if all_is_empty:                
                 table_data[table_name].pop(primary_key, None)
-
+            else:
+                table_data[table_name] = data
         for table_name in table_name_list:
             field_list = table_field_list[table_name]
             primary_key = table_primary_key[table_name]
@@ -141,23 +146,43 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
             sql_insert = 'INSERT INTO '+table_name+'('+field_name+') VALUES('+field_value+')'
             sql_update = 'UPDATE '+table_name+' SET '+field_set+' WHERE '+where_by_primary_key
 
-            
             if primary_key not in table_data[table_name]:
+                field_list = table_field_list[table_name]
+                for field in field_list:
+                    if field not in table_data[table_name] and field != primary_key:
+                        table_data[table_name][field] = None
                 # if there is such a data, get id by using unique_field
                 sql = sql_select_by_unique_field
                 result = conn.execute(text(sql), **table_data[table_name]).fetchall()
+                operation = '' # This variable is just for visual matter
+                operation_success = False
+                operation_sql = ''
                 if len(result)>0:
                     row = result[0]
                     table_data[table_name][primary_key] = row[0]
                     sql = sql_update
                     data = table_data[table_name]
-                    conn.execute(text(sql), **table_data[table_name])
+                    operation_success = conn.execute(text(sql), **table_data[table_name])
+                    operation_sql = sql
+                    operation = 'update'
                 else:
                     sql = sql_insert
                     data = table_data[table_name]
-                    conn.execute(text(sql), **table_data[table_name])
+                    operation_success = conn.execute(text(sql), **table_data[table_name])
+                    operation_sql = sql
+                    operation = 'insert'
                     sql = sql_select_by_unique_field
                     result = conn.execute(text(sql), **table_data[table_name]).fetchall()
                     if len(result)>0:
                         row = result[0]
-                        table_data[table_name][primary_key] = row[0]
+                        table_data[table_name][primary_key] = row[0]                    
+                # View
+                operation_success_string = "success" if operation_success else "fail"
+                print ('')
+                print ('TABLE NAME : '+table_name)
+                print ('OPERATION  : '+operation)
+                print ('SUCCESS    : '+operation_success_string)
+                for key in table_data[table_name]:
+                    print ('  '+key+' : '+unicode(table_data[table_name][key]))
+                print ('SQL        : '+operation_sql)
+                print ('')

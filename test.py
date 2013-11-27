@@ -10,7 +10,7 @@ file_name = 'test.csv'
 # more info about csv_param: http://docs.python.org/2/library/csv.html#csv-fmt-params
 csv_param = {
     'delimiter': ',',   # libre office usually use "," while microsoft office usually use "tab"
-    'quotechar': '|'
+    'quotechar': '"'
 }
 
 # define several preprocessing procedure (since human use different format from computer)
