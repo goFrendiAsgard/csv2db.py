@@ -1,5 +1,7 @@
-import csv, collections
+import csv, collections, codecs, sys
 from sqlalchemy import create_engine, text
+
+
 
 def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
     csv_reader = csv.reader(utf8_data, dialect=dialect, **kwargs)
@@ -7,6 +9,11 @@ def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
         yield [unicode(cell, 'utf-8') for cell in row]
 
 def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_STRUCTURE_LIST=[], CALLBACK={}):
+    # UTF-8 hell
+    UTF8Writer = codecs.getwriter('utf8')
+    sys.stdout = UTF8Writer(sys.stdout)
+
+    # open the file
     csvfile = open(FILE_NAME, 'rb')
     #reader = csv.reader(csvfile, **CSV_PARAM)
     reader = unicode_csv_reader(csvfile, **CSV_PARAM)
@@ -92,7 +99,7 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
             for field in field_list:
                 for i in xrange(len(csv_row)):
                     caption = csv_caption[i]
-                    if caption == caption_dict[field]: 
+                    if caption == caption_dict[field] and caption != '': 
                         if csv_row[i] == '':
                             data[field] = None
                         else:
@@ -183,6 +190,9 @@ def csv2db(FILE_NAME, CSV_PARAM={}, CONNECTION_STRING='sqlite:///db.db', TABLE_S
                 print ('OPERATION  : '+operation)
                 print ('SUCCESS    : '+operation_success_string)
                 for key in table_data[table_name]:
-                    print ('  '+key+' : '+unicode(table_data[table_name][key]))
+                    try:
+                        print ('  '+key+' : '+unicode(table_data[table_name][key]))
+                    except:
+                        print ('  '+key+' : '+str(table_data[table_name][key]))
                 print ('SQL        : '+operation_sql)
                 print ('')
